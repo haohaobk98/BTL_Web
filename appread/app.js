@@ -4,7 +4,6 @@ var mongojs = require('mongojs');
 var expressValidator = require('express-validator');
 var bodyParser = require('body-parser');
 var session = require('express-session');
-
 var User = require('./model/user');
 
 var flash = require('connect-flash');
@@ -77,11 +76,11 @@ app.use(expressValidator({
     }
   }));
 
-
+//   var io = require("socket.io")(app);
 // homepage route
-app.get('/',function(req,res){
-res.render('homepage');
-});
+// app.get('/',function(req,res){
+// res.render('homepage');
+// });
 
 // add new books
 app.get('/book/add',function(req,res){
@@ -216,6 +215,58 @@ function checkAuthentication(req,res,next){
 }
 
 
-app.listen(3004,function(){
+
+var mongoClient = require('mongodb').MongoClient;
+var url = "mongodb://localhost:27017/mydb";
+// io.on("connection",function(socket){
+// console.log("ok");
+// socket.on("gui-comment",function(data){
+//     io.sockets.emit("gui-comment",data);
+// })
+// });
+app.get("/",function(req,res){
+    mongoClient.connect(url, function(err, db) {
+        if (err) throw err;
+        var dbo=db.db("mydb");
+        dbo.collection("SanPhamMayTinh").find().toArray(function(err, result1) {
+            if (err) throw err;
+            dbo.collection("SanPhamChuot").find().toArray(function(err, result2){
+                if(err) throw err;
+                db.close();
+                res.render("homepage",{
+                    "MayTinh": result1,
+                    "Chuot":result2,
+                    "num1" : result1.length,
+                    "num2" : result2.length,
+                });
+        });   
+  
+    });
+});
+
+});
+app.get("/:id",function(req,res){
+    var router = req.params.id;
+    //router = new require('mongodb').ObjectID(router);
+    var query = {name: router};
+    mongoClient.connect(url, function(err, db) {
+        if (err) throw err;
+        var dbo = db.db("mydb");
+        dbo.collection("SanPhamMayTinh").findOne(query,function(err, result) {
+        if (result==null){
+            dbo.collection("SanPhamChuot").findOne(query,function(err, result){
+                res.render('template',{info: result, ten : "Chuot"});
+            })
+        }else{
+            res.render('template',{info: result, ten: "MayTinh"}); 
+        }
+          db.close();
+        
+        });
+});
+});
+
+
+app.listen(8080,function(){
     console.log('server started at port 3004');
 });

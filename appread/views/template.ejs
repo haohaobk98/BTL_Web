@@ -1,0 +1,70 @@
+
+<% include template/body1 %>
+<div id = "container">
+    <!-- header starts here-->
+<% include template/header %>
+<div id ="container_inner">
+    <!-- nav starts here-->
+<div id="container_inner_nav">
+<div id="container_inner_nav-inner">
+<% include template/nav %>
+</div>
+</div>
+    <!-- content starts here -->
+<div id = "container_inner_content">
+<div id ="container_inner_content-inner">
+    <div id ="san-pham">
+        <div class="container">
+                <div class="row">
+                  <div class="col-sm-4">
+                        <img id="image" width="300px" height="300px" src="image<%= ten%>/<%= info.image %>">
+                  </div>
+                  <div class="col-sm-6">
+                    <label>Tên sản phẩm: </label>
+                        <span id="name"><%= info.name %></span><hr>
+                    <label>Giá sản phẩm: </label>
+                    <span id="price"><%= info.price %></span><br>
+                    <label>Shop: </label>
+                    <span id="shop"><%= info.shop %> </span>
+                    <img id = "follow" src ="image/unfollow.png" width="40px" height="40px">
+                    <span id ="theodoi" style="color: rgb(177, 174, 171)"> Theo dõi</span><br>
+                    <label>Số sản phẩm: </label>
+                    <span id="code"> <%= info._id %></span><br>
+                    <label>Ngày đăng: </label>
+                    <span id="date"><%= info.date %> </span><hr>
+                    <label>Trạng thái: </label>
+                    <span id="state"><%= info.state %> </span><br>
+                    <label>Danh mục kèm theo: </label>
+                    <span id="list_attached"><%= info.list_attached %></span><br>
+                    <span></span>
+                    <img src="shopping.png" width="40px" height="40px">
+                    <input id="gio_hang" type="button" value="Thêm vào giỏ hàng"> 
+                    <img id="like" src="like.png" width="40px" height="40px">
+                  </div>
+                </div>
+              </div>
+        <div class="option">
+            <ul>
+                <li onclick="mota()"><a href="#">Mô tả</a></li>
+                <li onclick="binhluan()"><a href="#">Đánh giá/Bình luận</a></li>
+            </ul>
+        </div>
+       <div id="mota">
+        <%- info.describe %>
+       </div>
+
+       <div id="binhluan">
+            <label>Comment: </label>
+            <input type="text" placeholder="Comment your" id="Comment">
+            <input type="button" id="send" value="Send" onclick="test()">
+           <div id = "showcomment">
+
+           </div>
+       
+       </div>
+</div>
+
+</div>
+</div>
+
+<% include template/footer %>
