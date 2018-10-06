@@ -101,13 +101,12 @@ bottom:-0.2em;
 /*=====NAVIGATION======*/
 
 #nav{
-	padding: 5px;
-	}
+	padding: 1px;
+}
 	#nav_title{
 		text-align:center;
-		/*background-color:#d3d3d3;*/
-		margin:0.5em;
-		width:80%;
+		margin:0 0.5em;
+		width:83%;
 		font-size:1.3em;
 		background-color: #679bef;
 		padding: 0.3em;
@@ -118,9 +117,14 @@ bottom:-0.2em;
 	background-color: #e3e7ed;
 	margin-left: 10px;
 	margin-top: 0px;
+	height:600px;
+	}
+	#AlphaNav{
+		overflow-y: scroll;
+		height:90%;
 	}
 	#nav-inner ul li{
-		padding:0.1em;
+		padding:0.01em;
 		list-style:none;
 		border-bottom:2px solid #dadada;
 	}

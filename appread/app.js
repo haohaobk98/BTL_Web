@@ -267,6 +267,6 @@ app.get("/:id",function(req,res){
 });
 
 
-app.listen(8080,function(){
+app.listen(3004,function(){
     console.log('server started at port 3004');
 });
