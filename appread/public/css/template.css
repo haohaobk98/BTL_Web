@@ -54,7 +54,9 @@ width:25%;
 #header-inner1-image-inner{
 	width:100%;
 }
-
+.header-inner-link{
+	float:right;
+}
 .header-inner-link ul{
 list-style:none;
 }
@@ -72,21 +74,24 @@ display:inline;
 
 .fa{
 	
-	padding:0.4em;
+	padding: 0 0.8em;
 	font-size:1.5em;
 }
-
+.fa-user{
+	padding:0 0.1em;
+}
 #header-inner2{
 	height:60%;
 	background-color:#d3d3d3;
 	}
 
 .header-inner2-form{
-margin-left:500px;
+margin-left:10px;
 padding-top:0.2em;
+margin-right:300px;
 }
 .header-inner2-form-input{
-width:400px;
+width:800px;
 height:40px;
 border:1px solid gray;
 border-radius:5px;
@@ -94,14 +99,19 @@ border-radius:5px;
 .header-inner2-form-button{
 border:1px solid gray;
 border-radius:5px;
+width:100px;
+height:40px;
 position:relative;
-bottom:-0.2em;
+top:-0.3em;
 }
-
+#btn-user{
+	border-radius: 5px;
+}
 /*=====NAVIGATION======*/
 
 #nav{
 	padding: 1px;
+
 }
 	#nav_title{
 		text-align:center;
