@@ -76,22 +76,12 @@ app.use(expressValidator({
     }
   }));
 
-//   var io = require("socket.io")(app);
-// homepage route
-// app.get('/',function(req,res){
-// res.render('homepage');
-// });
-
-// add new books
-app.get('/book/add',function(req,res){
-res.render('add_book');
-});
-
 // register
 app.get('/register',function(req,res){
     res.render('register');
     });
 // Register User
+
 app.post('/register', function (req, res) {
 	var name = req.body.name;
 	var email = req.body.email;
@@ -131,11 +121,13 @@ app.post('/register', function (req, res) {
 					});
 				}
 				else {
-					var newUser = new User({
+				var	 newUser = new User({
 						name: name,
 						email: email,
 						username: username,
-						password: password
+						password: password,
+						PhoneNumber:
+						PhoneNumber
 					});
 					User.createUser(newUser, function (err, user) {
 						if (err) throw err;
@@ -213,6 +205,11 @@ function checkAuthentication(req,res,next){
         res.send("you have to login first");
     }
 }
+app.get('/user/profile',function(req,res){
+	res.render('profile',{
+        title:newUser.username
+	});
+});
 
 
 
