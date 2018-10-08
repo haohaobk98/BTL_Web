@@ -1,10 +1,8 @@
-<% var i=0  %>
-<% var j=0  %>
+<!-- <% var i=0  %>
+<% var j=0  %> -->
 <% include template/body1 %>
-
 <div id = "container">
     <!-- header starts here-->
-
 <% include template/header %>
 <div id ="container_inner">
     <!-- nav starts here-->
@@ -19,152 +17,36 @@
         <div id="main-1">
                 <div class="title-sp">
                     <label>Danh sách sản phẩm</label>
-                    <input type="button" class="next-2" value="&#10095" onclick="tang()">
-                    <input type="button" class="pre-2" value="&#10094" >
                   </div>
+                  <div class="cuon-1" id =" frame-1">
                     <table>
                             <tr>
-                              <th>
-                             <a href="/<%= MayTinh[i].name%>"><img id="0" src="/imageMayTinh/<%= MayTinh[i].image%>" width="150px" height="150px"></a><br>
-                             <span class ="ten" id = "ten-1"><%= MayTinh[i].name%></span><br>
-                             <span class ="gia" id = "gia-1"><%= MayTinh[i].price%></span><br>    
+                              <% MayTinh.forEach((data)=>{%>
+                                <th>
+                                <a href="/<%= data._id%>"><img id="0" src="/imageMayTinh/<%= data.image%>" width="150px" height="150px"></a><br>
+                                <span class ="ten" id = "ten-1"><%= data.name%></span><br>
+                                <span class ="gia" id = "gia-1"><%= data.price%></span><br>    
                               </th>
-                            <th>
-                                <a href="/<%= MayTinh[i+1].name%>"><img id="1" src="/imageMayTinh/<%= MayTinh[i+1].image%>" width="150px" height="150px"></a><br>
-                           
-                   <span class ="ten" id = "ten-2"><%= MayTinh[i+1].name%></span><br>
-                   <span class ="gia" id = "gia-2"><%= MayTinh[i+1].price%></span><br>                 
-                            </th>
-                            <th>      
-                                <a href="/<%= MayTinh[i+2].name%>"><img id="2" src="/imageMayTinh/<%= MayTinh[i+2].image%>" width="150px" height="150px"></a><br>  
-                              <span class ="ten" id = "ten-3"><%= MayTinh[i+2].name%></span><br>
-                              <span class ="gia" id = "gia-3"><%= MayTinh[i+2].price%></span><br>           
-                            </th>
-                            <th>      
-                                <a href="/<%= MayTinh[i+3].name%>"><img id="3" src="/imageMayTinh/<%= MayTinh[i+3].image%>" width="150px" height="150px"></a><br>  
-                                <span class ="ten" id = "ten-4"><%= MayTinh[i+3].name%></span><br>
-                                <span class ="gia" id = "gia-4"><%= MayTinh[i+3].price%></span><br>          
-                              </th>
+                              <% }) %>
+                            </tr>
                     </table>
-                    <div class="title-sp">
-                    <label>Danh sách sản phẩm</label>
-                    <input type="button" class="next-2" value="&#10095">
-                    <input type="button" class="pre-2" value="&#10094">
                   </div>
-                  <div id = " dong-trong"></div>
-                  <table>
-                    <tr>
-                      <th>
-                        <a href="/<%= Chuot[i].name%>"><img id="4" src="/imageChuot/<%= Chuot[i].image%>" width="150px" height="150px"></a><br>
-                       <span class ="ten" id = "ten-5"><%= Chuot[i].name%></span><br>
-                       <span class ="gia" id = "gia-5"><%= Chuot[i].price%></span><br>    
-                      </th>
-                      <th>
-                        <a href="/<%= Chuot[i+1].name%>"><img id="5" src="/imageChuot/<%= Chuot[i+1].image%>" width="150px" height="150px"></a><br>
-                     
-             <span class ="ten" id = "ten-6"><%= Chuot[i+1].name%></span><br>
-             <span class ="gia" id = "gia-6"><%= Chuot[i+1].price%></span><br>                
-                      </th>
-                      <th>
-                        <a href="/<%= Chuot[i+2].name%>"><img id="6" src="/imageChuot/<%= Chuot[i+2].image%>" width="150px" height="150px"></a><br>   
-                              <span class ="ten" id = "ten-7"><%= Chuot[i+2].name%></span><br>
-                              <span class ="gia" id = "gia-7"><%= Chuot[i+2].price%></span><br>    
-                      </th>
-                      <th>      
-                        <a href="/<%= Chuot[i+3].name%>"><img id="7" src="/imageChuot/<%= Chuot[i+3].image%>" width="150px" height="150px"></a><br>    
-                          <span class ="ten" id = "ten-8"><%= Chuot[i+3].name%></span><br>
-                          <span class ="gia" id = "gia-8"><%= Chuot[i+3].price%></span><br>        
-                        </th>
-                      </tr>
-                          </table>
-                          <div class="title-sp">
-                            <label>Danh sách sản phẩm</label>
-                            <input type="button" class="next-2" value="&#10095" onclick="tang()">
-                            <input type="button" class="pre-2" value="&#10094" >
-                          </div>
-                            <table>
-                                    <tr>
-                                      <th>
-                                     <a href="/<%= MayTinh[i].name%>"><img id="0" src="/imageMayTinh/<%= MayTinh[i].image%>" width="150px" height="150px"></a><br>
-                                     <span class ="ten" id = "ten-1"><%= MayTinh[i].name%></span><br>
-                                     <span class ="gia" id = "gia-1"><%= MayTinh[i].price%></span><br>    
-                                      </th>
-                                    <th>
-                                        <a href="/<%= MayTinh[i+1].name%>"><img id="1" src="/imageMayTinh/<%= MayTinh[i+1].image%>" width="150px" height="150px"></a><br>
-                                   
-                           <span class ="ten" id = "ten-2"><%= MayTinh[i+1].name%></span><br>
-                           <span class ="gia" id = "gia-2"><%= MayTinh[i+1].price%></span><br>                 
-                                    </th>
-                                    <th>      
-                                        <a href="/<%= MayTinh[i+2].name%>"><img id="2" src="/imageMayTinh/<%= MayTinh[i+2].image%>" width="150px" height="150px"></a><br>  
-                                      <span class ="ten" id = "ten-3"><%= MayTinh[i+2].name%></span><br>
-                                      <span class ="gia" id = "gia-3"><%= MayTinh[i+2].price%></span><br>           
-                                    </th>
-                                    <th>      
-                                        <a href="/<%= MayTinh[i+3].name%>"><img id="3" src="/imageMayTinh/<%= MayTinh[i+3].image%>" width="150px" height="150px"></a><br>  
-                                        <span class ="ten" id = "ten-4"><%= MayTinh[i+3].name%></span><br>
-                                        <span class ="gia" id = "gia-4"><%= MayTinh[i+3].price%></span><br>          
-                                      </th>
-                            </table>
-                            <div class="title-sp">
-                              <label>Danh sách sản phẩm</label>
-                              <input type="button" class="next-2" value="&#10095" onclick="tang()">
-                              <input type="button" class="pre-2" value="&#10094" >
-                            </div>
-                              <table>
-                                      <tr>
-                                        <th>
-                                       <a href="/<%= MayTinh[i].name%>"><img id="0" src="/imageMayTinh/<%= MayTinh[i].image%>" width="150px" height="150px"></a><br>
-                                       <span class ="ten" id = "ten-1"><%= MayTinh[i].name%></span><br>
-                                       <span class ="gia" id = "gia-1"><%= MayTinh[i].price%></span><br>    
-                                        </th>
-                                      <th>
-                                          <a href="/<%= MayTinh[i+1].name%>"><img id="1" src="/imageMayTinh/<%= MayTinh[i+1].image%>" width="150px" height="150px"></a><br>
-                                     
-                             <span class ="ten" id = "ten-2"><%= MayTinh[i+1].name%></span><br>
-                             <span class ="gia" id = "gia-2"><%= MayTinh[i+1].price%></span><br>                 
-                                      </th>
-                                      <th>      
-                                          <a href="/<%= MayTinh[i+2].name%>"><img id="2" src="/imageMayTinh/<%= MayTinh[i+2].image%>" width="150px" height="150px"></a><br>  
-                                        <span class ="ten" id = "ten-3"><%= MayTinh[i+2].name%></span><br>
-                                        <span class ="gia" id = "gia-3"><%= MayTinh[i+2].price%></span><br>           
-                                      </th>
-                                      <th>      
-                                          <a href="/<%= MayTinh[i+3].name%>"><img id="3" src="/imageMayTinh/<%= MayTinh[i+3].image%>" width="150px" height="150px"></a><br>  
-                                          <span class ="ten" id = "ten-4"><%= MayTinh[i+3].name%></span><br>
-                                          <span class ="gia" id = "gia-4"><%= MayTinh[i+3].price%></span><br>          
-                                        </th>
-                              </table>
-                              <div class="title-sp">
-                                <label>Danh sách sản phẩm</label>
-                                <input type="button" class="next-2" value="&#10095" onclick="tang()">
-                                <input type="button" class="pre-2" value="&#10094" >
-                              </div>
-                                <table>
-                                        <tr>
-                                          <th>
-                                         <a href="/<%= MayTinh[i].name%>"><img id="0" src="/imageMayTinh/<%= MayTinh[i].image%>" width="150px" height="150px"></a><br>
-                                         <span class ="ten" id = "ten-1"><%= MayTinh[i].name%></span><br>
-                                         <span class ="gia" id = "gia-1"><%= MayTinh[i].price%></span><br>    
-                                          </th>
-                                        <th>
-                                            <a href="/<%= MayTinh[i+1].name%>"><img id="1" src="/imageMayTinh/<%= MayTinh[i+1].image%>" width="150px" height="150px"></a><br>
-                                       
-                               <span class ="ten" id = "ten-2"><%= MayTinh[i+1].name%></span><br>
-                               <span class ="gia" id = "gia-2"><%= MayTinh[i+1].price%></span><br>                 
-                                        </th>
-                                        <th>      
-                                            <a href="/<%= MayTinh[i+2].name%>"><img id="2" src="/imageMayTinh/<%= MayTinh[i+2].image%>" width="150px" height="150px"></a><br>  
-                                          <span class ="ten" id = "ten-3"><%= MayTinh[i+2].name%></span><br>
-                                          <span class ="gia" id = "gia-3"><%= MayTinh[i+2].price%></span><br>           
-                                        </th>
-                                        <th>      
-                                            <a href="/<%= MayTinh[i+3].name%>"><img id="3" src="/imageMayTinh/<%= MayTinh[i+3].image%>" width="150px" height="150px"></a><br>  
-                                            <span class ="ten" id = "ten-4"><%= MayTinh[i+3].name%></span><br>
-                                            <span class ="gia" id = "gia-4"><%= MayTinh[i+3].price%></span><br>          
-                                          </th>
-                                </table>
-            </div>
+                  <div class="title-sp">
+                      <label>Danh sách sản phẩm</label>
+                    </div>
+                  <div class="cuon-1" id =" frame-2">
+                      <table>
+                              <tr>
+                                <% Chuot.forEach((data)=>{%>
+                                  <th>
+                                  <a href="/<%= data._id%>"><img id="0" src="/imageChuot/<%= data.image%>" width="150px" height="150px"></a><br>
+                                  <span class ="ten" id = "ten-1"><%= data.name%></span><br>
+                                  <span class ="gia" id = "gia-1"><%= data.price%></span><br>    
+                                  <% }) %>
+                                </th>
+                              </tr>
+                      </table>
+                    </div>
 </div>
 </div>
 </div>

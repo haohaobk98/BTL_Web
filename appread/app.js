@@ -75,13 +75,23 @@ app.use(expressValidator({
       };
     }
   }));
+  var server = require("http").Server(app);
+  var io = require("socket.io")(server);
+// homepage route
+// app.get('/',function(req,res){
+// res.render('homepage');
+// });
+
+// add new books
+app.get('/book/add',function(req,res){
+res.render('add_book');
+});
 
 // register
 app.get('/register',function(req,res){
     res.render('register');
     });
 // Register User
-
 app.post('/register', function (req, res) {
 	var name = req.body.name;
 	var email = req.body.email;
@@ -121,13 +131,11 @@ app.post('/register', function (req, res) {
 					});
 				}
 				else {
-				var	 newUser = new User({
+					var newUser = new User({
 						name: name,
 						email: email,
 						username: username,
-						password: password,
-						PhoneNumber:
-						PhoneNumber
+						password: password
 					});
 					User.createUser(newUser, function (err, user) {
 						if (err) throw err;
@@ -141,6 +149,78 @@ app.post('/register', function (req, res) {
 	}
     
 });
+
+// Hàm tìm kiếm
+function search_name(X,Y){
+    X = X.split(" ");
+    Y = Y.split(" ");
+    var lenX = X.length;
+    var lenY = Y.length;
+    //var a = new Array(new Array(lenX+1),new Array(lenY+1));
+    var a = new Array(lenX+1);
+    for(var i =0 ;i<lenX+1;i++){
+        a[i] = new Array(lenY+1)
+    }
+    
+    for(var i = lenX;i >= 0;i-- )
+        a[i][lenY] = 0;
+    
+    for(var j = lenY;j >= 0;j-- ){
+        a[lenX][j] = 0;
+    }
+    for(var i= lenX-1; i>=0; i--){
+        for(var j=lenY-1;j>=0;j--){
+            if(X[i]==Y[j]) a[i][j] = a[i+1][j+1] + 1;
+            else a[i][j] = a[i][j+1]>a[i+1][j]?a[i][j+1]:a[i+1][j];
+        }
+    }
+    return a[0][0]
+}
+function swap(x,y){
+    var k;
+    k=x;
+    x=y;
+    y=k;
+}
+
+app.post("/search", function(req,res){
+	var key = req.body.product_name;
+	var MongoClient = require('mongodb').MongoClient;
+    var url = "mongodb://localhost:27017/";
+    var data = new Array();
+    var data_num = new Array();
+MongoClient.connect(url, function(err, db) {
+  if (err) throw err;
+  var dbo = db.db("mydb");
+  var re = {name: key};
+  dbo.collection("SanPhamMayTinh").find().toArray( function(err, result) {
+	if (err) throw err;
+	for(var i = 0;i<result.length;i++){
+	if(search_name(result[i].name, key)>0){
+        data.push(result[i]);
+        data_num.push(search_name(result[i].name, key));
+	}
+}
+if(data.length!=0){
+    for(var i = 0; i<data.length-1;i++){
+        var k2;
+        var max;
+        for(var j=i+1;j<data.length;j++)
+        if(data_num[i]<data_num[j]){
+            // swap(data_num[i],data_num[j]);
+            // swap(data[i],data[j]);
+            var k1;
+            k1=data_num[i];data_num[i]=data_num[j];data_num[j]=k1;
+          max = j;
+        }
+        k2=data[i];data[i]=data[max];data[max]=k2;
+    }
+}
+res.render("searchpage",{kq: data})
+    db.close();
+  });
+});
+})
 //khi login thi chay middleware va goi den cai nay
 passport.use(new LocalStrategy(
 	function (username, password, done) {
@@ -205,22 +285,31 @@ function checkAuthentication(req,res,next){
         res.send("you have to login first");
     }
 }
-app.get('/user/profile',function(req,res){
-	res.render('profile',{
-        title:newUser.username
-	});
-});
 
 
 
 var mongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/mydb";
-// io.on("connection",function(socket){
-// console.log("ok");
-// socket.on("gui-comment",function(data){
-//     io.sockets.emit("gui-comment",data);
-// })
-// });
+io.on("connection",function(socket){
+console.log("ok");
+socket.on("gui-comment",function(data){
+    io.sockets.emit("gui-comment",data);
+})
+socket.on("list-sp",function(){
+	mongoClient.connect(url, function(err, db) {
+		        if (err) throw err;
+		        var dbo=db.db("mydb");
+		        dbo.collection("SanPhamMayTinh").find().toArray(function(err, result1) {
+		            if (err) throw err;
+		            dbo.collection("SanPhamChuot").find().toArray(function(err, result2){
+		                if(err) throw err;
+						db.close();
+						socket.emit("san-pham",result1)
+                       })
+                  });
+              });
+         });
+});
 app.get("/",function(req,res){
     mongoClient.connect(url, function(err, db) {
         if (err) throw err;
@@ -234,7 +323,7 @@ app.get("/",function(req,res){
                     "MayTinh": result1,
                     "Chuot":result2,
                     "num1" : result1.length,
-                    "num2" : result2.length,
+					"num2" : result2.length,
                 });
         });   
   
@@ -243,9 +332,9 @@ app.get("/",function(req,res){
 
 });
 app.get("/:id",function(req,res){
-    var router = req.params.id;
-    //router = new require('mongodb').ObjectID(router);
-    var query = {name: router};
+    var id = req.params.id;
+     id = new require('mongodb').ObjectID(id);
+    var query = {_id: id};
     mongoClient.connect(url, function(err, db) {
         if (err) throw err;
         var dbo = db.db("mydb");
@@ -264,6 +353,6 @@ app.get("/:id",function(req,res){
 });
 
 
-app.listen(3004,function(){
-    console.log('server started at port 3004');
+server.listen(8082,function(){
+    console.log('server started at port 8082');
 });

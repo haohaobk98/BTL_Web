@@ -15,19 +15,18 @@
 <div id ="container_inner_content-inner">
     <div id ="san-pham">
         <div class="container">
-                <div class="row">
-                  <div class="col-sm-4">
+                <table class="row">
+                    <tr>
+                 <th id = "left"> <div class="col-sm-4">
                         <img id="image" width="300px" height="300px" src="image<%= ten%>/<%= info.image %>">
-                  </div>
-                  <div class="col-sm-6">
+                  </div></th>
+                  <th id="right"><div class="col-sm-6">
                     <label>Tên sản phẩm: </label>
-                        <span id="name"><%= info.name %></span><hr>
+                    <span id="name"><%= info.name %></span><hr>
                     <label>Giá sản phẩm: </label>
                     <span id="price"><%= info.price %></span><br>
                     <label>Shop: </label>
-                    <span id="shop"><%= info.shop %> </span>
-                    <img id = "follow" src ="image/unfollow.png" width="40px" height="40px">
-                    <span id ="theodoi" style="color: rgb(177, 174, 171)"> Theo dõi</span><br>
+                    <span id="shop"><%= info.shop %> </span><br>
                     <label>Số sản phẩm: </label>
                     <span id="code"> <%= info._id %></span><br>
                     <label>Ngày đăng: </label>
@@ -36,17 +35,20 @@
                     <span id="state"><%= info.state %> </span><br>
                     <label>Danh mục kèm theo: </label>
                     <span id="list_attached"><%= info.list_attached %></span><br>
-                    <span></span>
-                    <img src="shopping.png" width="40px" height="40px">
+                    <img src="image/shopping.png" width="40px" height="40px">
                     <input id="gio_hang" type="button" value="Thêm vào giỏ hàng"> 
-                    <img id="like" src="like.png" width="40px" height="40px">
+                    <img id="like" src="image/like.png" width="40px" height="40px"><br>
+                    <img id = "follow" src ="image/unfollow.png" width="40px" height="40px">
+                    <span id ="theodoi" style="color: rgb(177, 174, 171)"> Theo dõi</span><br>
                   </div>
-                </div>
+                </th>
+                </tr>
+                </table>
               </div>
         <div class="option">
             <ul>
-                <li onclick="mota()"><a href="#">Mô tả</a></li>
-                <li onclick="binhluan()"><a href="#">Đánh giá/Bình luận</a></li>
+                <li onclick="mota()">Mô tả</li>
+                <li onclick="binhluan()">Đánh giá/Bình luận</li>
             </ul>
         </div>
        <div id="mota">
@@ -56,7 +58,7 @@
        <div id="binhluan">
             <label>Comment: </label>
             <input type="text" placeholder="Comment your" id="Comment">
-            <input type="button" id="send" value="Send" onclick="test()">
+            <input type="button" id="send" value="Send">
            <div id = "showcomment">
 
            </div>
@@ -68,3 +70,6 @@
 </div>
 
 <% include template/footer %>
+</div>
+</div>
+<% include template/body2 %>
