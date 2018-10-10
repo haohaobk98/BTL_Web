@@ -5,18 +5,21 @@ var expressValidator = require('express-validator');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var User = require('./model/user');
-
+const Nexmo = require('nexmo');
 var flash = require('connect-flash');
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
+var app = express();
+var server = require("http").Server(app);
+var io = require("socket.io")(server);
 // set database
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/loginapp');
 var db = mongoose.connection;
 
+
 // init app
-var app = express();
 
 // set the views
 app.set('views',path.join(__dirname,'views'));
@@ -75,17 +78,8 @@ app.use(expressValidator({
       };
     }
   }));
-  var server = require("http").Server(app);
-  var io = require("socket.io")(server);
-// homepage route
-// app.get('/',function(req,res){
-// res.render('homepage');
-// });
 
-// add new books
-app.get('/book/add',function(req,res){
-res.render('add_book');
-});
+
 
 // register
 app.get('/register',function(req,res){
@@ -149,6 +143,91 @@ app.post('/register', function (req, res) {
 	}
     
 });
+//Nexmo
+
+const nexmo = new Nexmo({
+    apiKey: '97520364',
+    apiSecret: 'Slep6sF2IJlaaz2X'
+  }, { debug: true });
+
+// Catch form submit
+
+app.post('/Confirm', (req, res) => {
+    var name = req.body.name;
+	var email = req.body.email;
+	var username = req.body.username;
+	var PhoneNumber = req.body.PhoneNumber;
+	var password = req.body.password;
+	var password2 = req.body.password2;
+
+	// Validation
+	req.checkBody('name', 'Name is required').notEmpty();
+	req.checkBody('email', 'Email is required').notEmpty();
+	req.checkBody('email', 'Email is not valid').isEmail();
+	req.checkBody('username', 'Username is required').notEmpty();
+	req.checkBody('PhoneNumber','PhoneNumber is required').notEmpty();
+	req.checkBody('password', 'Password is required').notEmpty();
+	req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
+
+	var errors = req.validationErrors();
+
+	if (errors) {
+		res.render('register', {
+			errors: errors
+		});
+    }else {
+		
+		//checking for email and username are already taken
+		User.findOne({ username: { 
+			"$regex": "^" + username + "\\b", "$options": "i"
+	    }}, function (err, user) {
+			User.findOne({ email: { 
+				"$regex": "^" + email + "\\b", "$options": "i"
+		}}, function (err, mail) {
+				if (user || mail) {
+					res.render('register', {
+						user: user,
+						mail: mail
+					});
+				}
+				else {
+					var newUser = new User({
+						name: name,
+						email: email,
+						username: username,
+						password: password
+					});
+					User.createUser(newUser, function (err, user) {
+						if (err) throw err;
+						console.log(user);
+					});
+         	// req.flash('success_msg', 'You are registered and can now login');
+			// 		res.redirect('/Confirm');
+				}
+			});
+		});
+	}
+    
+    var number = req.body.PhoneNumber;
+    var text = parseInt(Math.random()*(9999-1000)+1000);
+    nexmo.message.sendSms(
+      '841664925036', number, text, { type: 'unicode' },
+      (err, responseData) => {
+        if(err) {
+          console.log(err);
+        } else {
+          const { messages } = responseData;
+          const { ['message-id']: id, ['to']: number, ['error-text']: error  } = messages[0];
+          console.dir(responseData);
+          const data = {id,number,error };
+  
+          // Emit to the client
+          io.emit('smsStatus', {data: data, code: text});
+          res.render("Confirm",{dt: text});
+        }
+      }
+    );
+  });
 
 // Hàm tìm kiếm
 function search_name(X,Y){
@@ -353,6 +432,6 @@ app.get("/:id",function(req,res){
 });
 
 
-server.listen(8082,function(){
+server.listen(8083,function(){
     console.log('server started at port 8082');
 });
