@@ -129,14 +129,15 @@ app.post('/register', function (req, res) {
 						name: name,
 						email: email,
 						username: username,
-						password: password
+						password: password,
+						PhoneNumber:PhoneNumber
 					});
 					User.createUser(newUser, function (err, user) {
 						if (err) throw err;
 						console.log(user);
 					});
-         	req.flash('success_msg', 'You are registered and can now login');
-					res.redirect('/login');
+         	//req.flash('success_msg', 'You are registered and can now login');
+					res.redirect('/Confirm');
 				}
 			});
 		});
@@ -153,61 +154,7 @@ const nexmo = new Nexmo({
 // Catch form submit
 
 app.post('/Confirm', (req, res) => {
-    var name = req.body.name;
-	var email = req.body.email;
-	var username = req.body.username;
-	var PhoneNumber = req.body.PhoneNumber;
-	var password = req.body.password;
-	var password2 = req.body.password2;
-
-	// Validation
-	req.checkBody('name', 'Name is required').notEmpty();
-	req.checkBody('email', 'Email is required').notEmpty();
-	req.checkBody('email', 'Email is not valid').isEmail();
-	req.checkBody('username', 'Username is required').notEmpty();
-	req.checkBody('PhoneNumber','PhoneNumber is required').notEmpty();
-	req.checkBody('password', 'Password is required').notEmpty();
-	req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
-
-	var errors = req.validationErrors();
-
-	if (errors) {
-		res.render('register', {
-			errors: errors
-		});
-    }else {
-		
-		//checking for email and username are already taken
-		User.findOne({ username: { 
-			"$regex": "^" + username + "\\b", "$options": "i"
-	    }}, function (err, user) {
-			User.findOne({ email: { 
-				"$regex": "^" + email + "\\b", "$options": "i"
-		}}, function (err, mail) {
-				if (user || mail) {
-					res.render('register', {
-						user: user,
-						mail: mail
-					});
-				}
-				else {
-					var newUser = new User({
-						name: name,
-						email: email,
-						username: username,
-						password: password
-					});
-					User.createUser(newUser, function (err, user) {
-						if (err) throw err;
-						console.log(user);
-					});
-         	// req.flash('success_msg', 'You are registered and can now login');
-			// 		res.redirect('/Confirm');
-				}
-			});
-		});
-	}
-    
+  
     var number = req.body.PhoneNumber;
     var text = parseInt(Math.random()*(9999-1000)+1000);
     nexmo.message.sendSms(
@@ -338,8 +285,8 @@ app.get('/login',function(req,res){
 app.post('/login',
 	passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login', failureFlash: true }),
 	function (req, res) {
-		res.redirect('/',function(){
-			alert("ban da dang nhap thanh cong");
+		res.redirect('/',{
+			infor:"haohao"
 		});
 		
 	});
@@ -432,6 +379,6 @@ app.get("/:id",function(req,res){
 });
 
 
-server.listen(8083,function(){
+server.listen(8084,function(){
     console.log('server started at port 8082');
 });
