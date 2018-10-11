@@ -84,65 +84,66 @@ app.use(expressValidator({
 // register
 app.get('/register',function(req,res){
     res.render('register');
-    });
+	});
+
 // Register User
-app.post('/register', function (req, res) {
-	var name = req.body.name;
-	var email = req.body.email;
-	var username = req.body.username;
-	var PhoneNumber = req.body.PhoneNumber;
-	var password = req.body.password;
-	var password2 = req.body.password2;
+// app.post('/register', function (req, res) {
+// 	var name = req.body.name;
+// 	var email = req.body.email;
+// 	var username = req.body.username;
+// 	var PhoneNumber = req.body.PhoneNumber;
+// 	var password = req.body.password;
+// 	var password2 = req.body.password2;
 
-	// Validation
-	req.checkBody('name', 'Name is required').notEmpty();
-	req.checkBody('email', 'Email is required').notEmpty();
-	req.checkBody('email', 'Email is not valid').isEmail();
-	req.checkBody('username', 'Username is required').notEmpty();
-	req.checkBody('PhoneNumber','PhoneNumber is required').notEmpty();
-	req.checkBody('password', 'Password is required').notEmpty();
-	req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
+// 	// Validation
+// 	req.checkBody('name', 'Name is required').notEmpty();
+// 	req.checkBody('email', 'Email is required').notEmpty();
+// 	req.checkBody('email', 'Email is not valid').isEmail();
+// 	req.checkBody('username', 'Username is required').notEmpty();
+// 	req.checkBody('PhoneNumber','PhoneNumber is required').notEmpty();
+// 	req.checkBody('password', 'Password is required').notEmpty();
+// 	req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
 
-	var errors = req.validationErrors();
+// 	var errors = req.validationErrors();
 
-	if (errors) {
-		res.render('register', {
-			errors: errors
-		});
-    }else {
+// 	if (errors) {
+// 		res.render('register', {
+// 			errors: errors
+// 		});
+//     }else {
 		
-		//checking for email and username are already taken
-		User.findOne({ username: { 
-			"$regex": "^" + username + "\\b", "$options": "i"
-	    }}, function (err, user) {
-			User.findOne({ email: { 
-				"$regex": "^" + email + "\\b", "$options": "i"
-		}}, function (err, mail) {
-				if (user || mail) {
-					res.render('register', {
-						user: user,
-						mail: mail
-					});
-				}
-				else {
-					var newUser = new User({
-						name: name,
-						email: email,
-						username: username,
-						password: password
-					});
-					User.createUser(newUser, function (err, user) {
-						if (err) throw err;
-						console.log(user);
-					});
-         	req.flash('success_msg', 'You are registered and can now login');
-					res.redirect('/login');
-				}
-			});
-		});
-	}
+// 		//checking for email and username are already taken
+// 		User.findOne({ username: { 
+// 			"$regex": "^" + username + "\\b", "$options": "i"
+// 	    }}, function (err, user) {
+// 			User.findOne({ email: { 
+// 				"$regex": "^" + email + "\\b", "$options": "i"
+// 		}}, function (err, mail) {
+// 				if (user || mail) {
+// 					res.render('register', {
+// 						user: user,
+// 						mail: mail
+// 					});
+// 				}
+// 				else {
+// 					var newUser = new User({
+// 						name: name,
+// 						email: email,
+// 						username: username,
+// 						password: password
+// 					});
+// 					User.createUser(newUser, function (err, user) {
+// 						if (err) throw err;
+// 						console.log(user);
+// 					});
+//          	req.flash('success_msg', 'You are registered and can now login');
+// 					res.redirect('/login');
+// 				}
+// 			});
+// 		});
+// 	}
     
-});
+// });
 //Nexmo
 
 const nexmo = new Nexmo({
@@ -151,15 +152,22 @@ const nexmo = new Nexmo({
   }, { debug: true });
 
 // Catch form submit
-
-app.post('/Confirm', (req, res) => {
+var code ;
+var name1;
+var username1;
+var email1;
+var password1;
+app.post('/register', (req, res) => {
     var name = req.body.name;
 	var email = req.body.email;
 	var username = req.body.username;
 	var PhoneNumber = req.body.PhoneNumber;
 	var password = req.body.password;
 	var password2 = req.body.password2;
-
+name1 = name;
+username1 = username;
+email1 = email;
+password1 = password;
 	// Validation
 	req.checkBody('name', 'Name is required').notEmpty();
 	req.checkBody('email', 'Email is required').notEmpty();
@@ -168,7 +176,6 @@ app.post('/Confirm', (req, res) => {
 	req.checkBody('PhoneNumber','PhoneNumber is required').notEmpty();
 	req.checkBody('password', 'Password is required').notEmpty();
 	req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
-
 	var errors = req.validationErrors();
 
 	if (errors) {
@@ -176,7 +183,6 @@ app.post('/Confirm', (req, res) => {
 			errors: errors
 		});
     }else {
-		
 		//checking for email and username are already taken
 		User.findOne({ username: { 
 			"$regex": "^" + username + "\\b", "$options": "i"
@@ -191,51 +197,59 @@ app.post('/Confirm', (req, res) => {
 					});
 				}
 				else {
-					var newUser = new User({
-						name: name,
-						email: email,
-						username: username,
-						password: password
-					});
-					User.createUser(newUser, function (err, user) {
-						if (err) throw err;
-						console.log(user);
-					});
-         	// req.flash('success_msg', 'You are registered and can now login');
-			// 		res.redirect('/Confirm');
+					var number = req.body.PhoneNumber;
+					var text = parseInt(Math.random()*(9999-1000)+1000);
+					code = text;
+					nexmo.message.sendSms(
+					  '841664925036', number, text, { type: 'unicode' },
+					  (err, responseData) => {
+						if(err) {
+						  console.log(err);
+						} else {
+						  const { messages } = responseData;
+						  const { ['message-id']: id, ['to']: number, ['error-text']: error  } = messages[0];
+						  console.dir(responseData);
+						  const data = {id,number,error };
+				  
+						  // Emit to the client
+						  io.emit('smsStatus', {data: data, code: text});
+						  res.render("Confirm",{dt: text});
+						}
+					  }
+					);
 				}
 			});
 		});
 	}
+	
     
-    var number = req.body.PhoneNumber;
-    var text = parseInt(Math.random()*(9999-1000)+1000);
-    nexmo.message.sendSms(
-      '841664925036', number, text, { type: 'unicode' },
-      (err, responseData) => {
-        if(err) {
-          console.log(err);
-        } else {
-          const { messages } = responseData;
-          const { ['message-id']: id, ['to']: number, ['error-text']: error  } = messages[0];
-          console.dir(responseData);
-          const data = {id,number,error };
-  
-          // Emit to the client
-          io.emit('smsStatus', {data: data, code: text});
-          res.render("Confirm",{dt: text});
-        }
-      }
-    );
   });
+app.post('/codeconfirm', function(req,res){
 
+	 var code1 = req.body.code;
+    if(code == code1){
+		var newUser = new User({
+			name: name1,
+			email: email1,
+			username: username1,
+			password: password1
+		});
+		User.createUser(newUser, function (err, user) {
+			if (err) throw err;
+			console.log(user);
+		});
+		res.render('login');
+	}else{
+		res.render('Confirm',{dt: code})
+	}
+
+})
 // Hàm tìm kiếm
 function search_name(X,Y){
     X = X.split(" ");
     Y = Y.split(" ");
     var lenX = X.length;
     var lenY = Y.length;
-    //var a = new Array(new Array(lenX+1),new Array(lenY+1));
     var a = new Array(lenX+1);
     for(var i =0 ;i<lenX+1;i++){
         a[i] = new Array(lenY+1)
