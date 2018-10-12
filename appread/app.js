@@ -8,6 +8,7 @@ var User = require('./model/user');
 const Nexmo = require('nexmo');
 var flash = require('connect-flash');
 var passport = require('passport');
+var bcrypt = require('bcryptjs');
 var LocalStrategy = require('passport-local').Strategy;
 var app = express();
 var server = require("http").Server(app);
@@ -17,7 +18,6 @@ var mongo = require('mongodb');
 var mongoose = require('mongoose');
 mongoose.connect('mongodb://localhost/loginapp');
 var db = mongoose.connection;
-
 
 // init app
 
@@ -44,22 +44,26 @@ app.use(passport.initialize());
 // lấy thông tin user rồi gắn vào req.user 
 app.use(passport.session());
 
-
   // Connect Flash
   app.use(flash());
 
 //global vars
 app.use(function(req,res,next){
-//	res.locals.success_msg = req.flash('success_msg');
+//  res.locals.success_msg = req.flash('success_msg');
   //res.locals.error_msg = req.flash('error_msg');
   //res.locals.error = req.flash('error');
    // res.locals.message = null;
-	res.locals.errors = null;
-	res.locals.user = req.user || null;
-	res.locals.mail = req.mail || null;
-	
+    res.locals.errors = null;
+    res.locals.user = req.user || null;
+    res.locals.mail = req.mail || null;
+    res.locals.phone = req.phone || null;
+    
     next();
 });
+
+
+
+
 
 // Express Validator
 app.use(expressValidator({
@@ -80,101 +84,223 @@ app.use(expressValidator({
   }));
 
 
-
 // register
 app.get('/register',function(req,res){
     res.render('register');
     });
-// Register User
-app.post('/register', function (req, res) {
-	var name = req.body.name;
-	var email = req.body.email;
-	var username = req.body.username;
-	var PhoneNumber = req.body.PhoneNumber;
-	var password = req.body.password;
-	var password2 = req.body.password2;
 
-	// Validation
-	req.checkBody('name', 'Name is required').notEmpty();
-	req.checkBody('email', 'Email is required').notEmpty();
-	req.checkBody('email', 'Email is not valid').isEmail();
-	req.checkBody('username', 'Username is required').notEmpty();
-	req.checkBody('PhoneNumber','PhoneNumber is required').notEmpty();
-	req.checkBody('password', 'Password is required').notEmpty();
-	req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
-
-	var errors = req.validationErrors();
-
-	if (errors) {
-		res.render('register', {
-			errors: errors
-		});
-    }else {
-		
-		//checking for email and username are already taken
-		User.findOne({ username: { 
-			"$regex": "^" + username + "\\b", "$options": "i"
-	    }}, function (err, user) {
-			User.findOne({ email: { 
-				"$regex": "^" + email + "\\b", "$options": "i"
-		}}, function (err, mail) {
-				if (user || mail) {
-					res.render('register', {
-						user: user,
-						mail: mail
-					});
-				}
-				else {
-					var newUser = new User({
-						name: name,
-						email: email,
-						username: username,
-						password: password,
-						PhoneNumber:PhoneNumber
-					});
-					User.createUser(newUser, function (err, user) {
-						if (err) throw err;
-						console.log(user);
-					});
-         	//req.flash('success_msg', 'You are registered and can now login');
-					res.redirect('/Confirm');
-				}
-			});
-		});
-	}
-    
-});
 //Nexmo
 
 const nexmo = new Nexmo({
-    apiKey: '97520364',
-    apiSecret: 'Slep6sF2IJlaaz2X'
+    apiKey: '5e555a5e',
+    apiSecret: 'i5xyaslqhHZwW00z'
   }, { debug: true });
 
 // Catch form submit
+var code,code1 ;
+var name1;
+var username1;
+var email1;
+var password1;
+var PhoneNumber1;
+app.post('/register', (req, res) => {
+    var name = req.body.name;
+    var email = req.body.email;
+    var username = req.body.username;
+    var PhoneNumber = req.body.PhoneNumber;
+    var password = req.body.password;
+    var password2 = req.body.password2;
+name1 = name;
+username1 = username;
+email1 = email;
+password1 = password;
+PhoneNumber1 = PhoneNumber;
+    // Validation
+    req.checkBody('name', 'Name is required').notEmpty();
+    req.checkBody('email', 'Email is required').notEmpty();
+    req.checkBody('email', 'Email is not valid').isEmail();
+    req.checkBody('username', 'Username is required').notEmpty();
+    req.checkBody('PhoneNumber','PhoneNumber is required').notEmpty();
+    req.checkBody('password', 'Password is required').notEmpty();
+    req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
+    var errors = req.validationErrors();
 
-app.post('/Confirm', (req, res) => {
-  
-    var number = req.body.PhoneNumber;
-    var text = parseInt(Math.random()*(9999-1000)+1000);
-    nexmo.message.sendSms(
-      '841664925036', number, text, { type: 'unicode' },
-      (err, responseData) => {
-        if(err) {
-          console.log(err);
-        } else {
-          const { messages } = responseData;
-          const { ['message-id']: id, ['to']: number, ['error-text']: error  } = messages[0];
-          console.dir(responseData);
-          const data = {id,number,error };
-  
-          // Emit to the client
-          io.emit('smsStatus', {data: data, code: text});
-          res.render("Confirm",{dt: text});
-        }
-      }
-    );
+    if (errors) {
+        res.render('register', {
+            errors: errors
+        });
+    }else {
+        //checking for email and username are already taken
+        User.findOne({ username: { 
+            "$regex": "^" + username + "\\b", "$options": "i"
+        }}, function (err, user) {
+            User.findOne({ email: { 
+                "$regex": "^" + email1 + "\\b", "$options": "i"
+        }}, function (err, mail) {
+            User.findOne({PhoneNumber: {
+                "$regex": "^" + PhoneNumber + "\\b","$options": "i"
+            }},function(err,phone){
+
+                if (user || mail ||phone) {
+                    res.render('register', {
+                        user: user,
+                        mail: mail,
+                        phone: phone
+                    });
+                }
+                else {
+                    var number = req.body.PhoneNumber;
+                    var text = parseInt(Math.random()*(9999-1000)+1000);
+                    code = text;
+                    nexmo.message.sendSms(
+                      '841664925036', number, text, { type: 'unicode' },
+                      (err, responseData) => {
+                        if(err) {
+                          console.log(err);
+                        } else {
+                          const { messages } = responseData;
+                          const { ['message-id']: id, ['to']: number, ['error-text']: error  } = messages[0];
+                          console.dir(responseData);
+                          const data = {id,number,error };
+                  
+                          // Emit to the client
+                          io.emit('smsStatus', {data: data, code: text});
+                          res.render("resetPassword",{dt: text});
+                        }
+                      }
+                    );
+                }
+            })
+            });
+        });
+    }
   });
+
+
+app.post('/codeconfirm', function(req,res){
+
+     var code1 = req.body.code;
+    if(code == code1){
+        var newUser = new User({
+            name: name1,
+            email: email1,
+            username: username1,
+            password: password1,
+            PhoneNumber:PhoneNumber1
+        });
+        User.createUser(newUser, function (err, user) {
+            if (err) throw err;
+            console.log(user);
+        });
+        res.render('login');
+    }else{
+        res.render('Confirm',{dt: code})
+    }
+
+})
+
+// forget Password
+app.get('/forgetPassword',function(req,res){
+    res.render("forgetPassword")
+})
+
+
+var phoneInput;
+app.post('/forgetPassword',function(req,res){
+ phoneInput = req.body.numberPhone;
+    var MongoClient = require('mongodb').MongoClient;
+    var url = "mongodb://localhost:27017/";
+    MongoClient.connect(url,function(err,db){
+        var dbo = db.db("loginapp")
+        if(err){
+            console.log("connect failed!");
+        }else{
+            console.log("connected to database");
+            dbo.collection('users').find({PhoneNumber:phoneInput}).toArray(function(err,user){
+                if(err) throw err;
+                else if(user.length > 0){
+
+                    var text = parseInt(Math.random()*(9999-1000)+1000);
+                    code1 = text;
+                    nexmo.message.sendSms(
+                      '841664925036', phoneInput, text, { type: 'unicode' },
+                      (err, responseData) => {
+                        if(err) {
+                          console.log(err);
+                        } else {
+                          const { messages } = responseData;
+                          const { ['message-id']: id, ['to']: number, ['error-text']: error  } = messages[0];
+                          console.dir(responseData);
+                          const data = {id,number,error };
+                  
+                          // Emit to the client
+                          
+                          res.render("resetPassword",{dt: text});
+                        }});
+                }else{
+                    res.redirect('forgetPassword');
+                }
+               db.close(); 
+             });
+        }
+     
+       });
+       
+    });
+      
+
+// resetpassword
+app.post('/resetPassword',function(req,res){
+    var resetPassword = req.body.resetPassword;
+    var resetPassword2 = req.body.resetPassword2;
+    var codeReset = req.body.codeReset;
+
+    // check errors
+    req.checkBody('resetPassword','Nhập mật khẩu mới!').notEmpty();
+    req.checkBody('resetPassword2','Nhập lại mật khẩu yêu cầu!').notEmpty();
+    req.checkBody('resetPassword2','Mật khẩu không khớp!').equals(req.body.resetPassword);
+    req.checkBody('codeReset','Nhập mã code xác nhận!').notEmpty();
+      //code1.toString();
+    req.checkBody('codeReset','Mã xác nhận không đúng!').equals(code1.toString());
+    console.log(code1);
+    var errors = req.validationErrors();
+
+    if(errors){
+        res.render('resetPassword',{
+            errors:errors
+        })
+    }else{
+        var MongoClient = require('mongodb').MongoClient;
+        var url = "mongodb://127.0.0.1:27017/";
+
+        MongoClient.connect(url, function(err, db) {
+         if (err) throw err;
+         var dbo = db.db("loginapp");
+        var password = {PhoneNumber: phoneInput}
+        //bcrypt 
+
+    bcrypt.genSalt(10, function(err, salt) {
+        bcrypt.hash(resetPassword, salt, function(err, hash) {
+            var newpass = { $set: {password: hash } };
+            dbo.collection("users").updateOne(password, newpass, function(err, result) {
+            if (err) throw err;
+            console.log("Cập nhật mật khẩu thành công");
+            res.render('login');
+            db.close();
+        });
+   });
+
+        
+   });
+
+        });
+        
+
+    }
+
+    
+});
+
 
 // Hàm tìm kiếm
 function search_name(X,Y){
@@ -182,7 +308,6 @@ function search_name(X,Y){
     Y = Y.split(" ");
     var lenX = X.length;
     var lenY = Y.length;
-    //var a = new Array(new Array(lenX+1),new Array(lenY+1));
     var a = new Array(lenX+1);
     for(var i =0 ;i<lenX+1;i++){
         a[i] = new Array(lenY+1)
@@ -210,8 +335,8 @@ function swap(x,y){
 }
 
 app.post("/search", function(req,res){
-	var key = req.body.product_name;
-	var MongoClient = require('mongodb').MongoClient;
+    var key = req.body.product_name;
+    var MongoClient = require('mongodb').MongoClient;
     var url = "mongodb://localhost:27017/";
     var data = new Array();
     var data_num = new Array();
@@ -220,12 +345,12 @@ MongoClient.connect(url, function(err, db) {
   var dbo = db.db("mydb");
   var re = {name: key};
   dbo.collection("SanPhamMayTinh").find().toArray( function(err, result) {
-	if (err) throw err;
-	for(var i = 0;i<result.length;i++){
-	if(search_name(result[i].name, key)>0){
+    if (err) throw err;
+    for(var i = 0;i<result.length;i++){
+    if(search_name(result[i].name, key)>0){
         data.push(result[i]);
         data_num.push(search_name(result[i].name, key));
-	}
+    }
 }
 if(data.length!=0){
     for(var i = 0; i<data.length-1;i++){
@@ -249,32 +374,32 @@ res.render("searchpage",{kq: data})
 })
 //khi login thi chay middleware va goi den cai nay
 passport.use(new LocalStrategy(
-	function (username, password, done) {
-		User.getUserByUsername(username, function (err, user) {
-			if (err) throw err;
-			if (!user) {
-				return done(null, false, { message: 'Unknown User' });
-			}
+    function (username, password, done) {
+        User.getUserByUsername(username, function (err, user) {
+            if (err) throw err;
+            if (!user) {
+                return done(null, false, { message: 'Unknown User' });
+            }
 
-			User.comparePassword(password, user.password, function (err, isMatch) {
-				if (err) throw err;
-				if (isMatch) {
-					return done(null, user);
-				} else {
-					return done(null, false, { message: 'Invalid password' });
-				}
-			});
-		});
-	}));
+            User.comparePassword(password, user.password, function (err, isMatch) {
+                if (err) throw err;
+                if (isMatch) {
+                    return done(null, user);
+                } else {
+                    return done(null, false, { message: 'Invalid password' });
+                }
+            });
+        });
+    }));
 // ham duoc goi khi xac thực thành công để lưu thông tin user vào sesstion
 passport.serializeUser(function (user, done) {
-	done(null, user.id);
+    done(null, user.id);
 });
 // giuos ta lấy dữ liệu user dựa vào thông tin lưu trên session và gắn vào req.user 
 passport.deserializeUser(function (id, done) {
-	User.getUserById(id, function (err, user) {
-		done(err, user);
-	});
+    User.getUserById(id, function (err, user) {
+        done(err, user);
+    });
 });
 
 // login
@@ -283,20 +408,20 @@ app.get('/login',function(req,res){
     });
 
 app.post('/login',
-	passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login', failureFlash: true }),
-	function (req, res) {
-		res.redirect('/',{
-			infor:"haohao"
-		});
-		
-	});
+    passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login', failureFlash: true }),
+    function (req, res) {
+        res.redirect('/',function(){
+            alert("ban da dang nhap thanh cong");
+        });
+        
+    });
 
-	app.get('/logout', function (req, res) {
-	req.logout();
+    app.get('/logout', function (req, res) {
+    req.logout();
 
-	req.flash('success_msg', 'You are logged out');
+    req.flash('success_msg', 'You are logged out');
 
-	res.redirect('/');
+    res.redirect('/');
 });
 
 // get follow list
@@ -313,7 +438,6 @@ function checkAuthentication(req,res,next){
 }
 
 
-
 var mongoClient = require('mongodb').MongoClient;
 var url = "mongodb://localhost:27017/mydb";
 io.on("connection",function(socket){
@@ -322,15 +446,15 @@ socket.on("gui-comment",function(data){
     io.sockets.emit("gui-comment",data);
 })
 socket.on("list-sp",function(){
-	mongoClient.connect(url, function(err, db) {
-		        if (err) throw err;
-		        var dbo=db.db("mydb");
-		        dbo.collection("SanPhamMayTinh").find().toArray(function(err, result1) {
-		            if (err) throw err;
-		            dbo.collection("SanPhamChuot").find().toArray(function(err, result2){
-		                if(err) throw err;
-						db.close();
-						socket.emit("san-pham",result1)
+    mongoClient.connect(url, function(err, db) {
+                if (err) throw err;
+                var dbo=db.db("mydb");
+                dbo.collection("SanPhamMayTinh").find().toArray(function(err, result1) {
+                    if (err) throw err;
+                    dbo.collection("SanPhamChuot").find().toArray(function(err, result2){
+                        if(err) throw err;
+                        db.close();
+                        socket.emit("san-pham",result1)
                        })
                   });
               });
@@ -349,7 +473,7 @@ app.get("/",function(req,res){
                     "MayTinh": result1,
                     "Chuot":result2,
                     "num1" : result1.length,
-					"num2" : result2.length,
+                    "num2" : result2.length,
                 });
         });   
   
@@ -378,7 +502,6 @@ app.get("/:id",function(req,res){
 });
 });
 
-
 server.listen(8084,function(){
     console.log('server started at port 8084');
 });
@@ -394,3 +517,4 @@ io.on("connection",function(socket){
         socket.emit("Server-send-admin-message",data)
     })
 })
+
