@@ -503,6 +503,18 @@ app.get("/:id",function(req,res){
 });
 
 server.listen(8084,function(){
-    console.log('server started at port 8082');
+    console.log('server started at port 8084');
 });
+
+//pop-up-chat
+//chua check log in
+io.on("connection",function(socket){
+    socket.on("Client-send-messages",function(data){
+        socket.emit("Server-send-your-message",data)
+        socket.broadcast.emit("Client-ask",data)
+    })
+    socket.on("Admin-send-messages",function(data){
+        socket.emit("Server-send-admin-message",data)
+    })
+})
 
