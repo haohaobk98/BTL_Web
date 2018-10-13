@@ -1,5 +1,7 @@
 <% include template/body1 %>
+<div class="form-format">
 <h2 class="page-header">Account Login</h2>
+
 <form method="post" action="/login">
   <div class="form-group">
     <label>Username</label>
@@ -9,7 +11,8 @@
     <label>Password</label>
     <input type="password" class="form-control" name="password" placeholder="Password">
   </div>
-  <a href="/forgetPassword">quen mat khau</a>
+  <a class="forgotPS" href="/forgetPassword">Quên mật khẩu</a>
   <button type="submit" class="form-button">Submit</button>
 </form>
+</div>
 <% include template/body2 %>
