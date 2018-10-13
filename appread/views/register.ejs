@@ -17,6 +17,7 @@
         <% }) %>
     </ul>
 <% } %>
+<div class="form-format">
 <form method="POST" action="/register">
    <div class="form-group">
     <label>Name</label>
@@ -35,7 +36,7 @@
 
   <div class="form-group">
       <label>PhoneNumber</label>
-      <input type="number" class="form-control" placeholder="PhoneNumber" name="PhoneNumber" id ="PhoneNumber ">
+      <input type="number" class="form-control" placeholder="Example:841634825349" name="PhoneNumber" id ="PhoneNumber ">
     </div>
 
   <div class="form-group">
@@ -50,5 +51,6 @@
 
   <button type="submit" class="form-button">Submit</button>
 </form>
+</div>
 
 <% include template/body2 %>

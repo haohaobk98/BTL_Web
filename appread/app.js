@@ -327,12 +327,6 @@ function search_name(X,Y){
     }
     return a[0][0]
 }
-function swap(x,y){
-    var k;
-    k=x;
-    x=y;
-    y=k;
-}
 
 app.post("/search", function(req,res){
     var key = req.body.product_name;
@@ -352,14 +346,12 @@ MongoClient.connect(url, function(err, db) {
         data_num.push(search_name(result[i].name, key));
     }
 }
-if(data.length!=0){
-    for(var i = 0; i<data.length-1;i++){
-        var k2;
-        var max;
+     if(data.length!=0){
+        for(var i = 0; i<data.length-1;i++){
+           var k2;
+           var max;
         for(var j=i+1;j<data.length;j++)
         if(data_num[i]<data_num[j]){
-            // swap(data_num[i],data_num[j]);
-            // swap(data[i],data[j]);
             var k1;
             k1=data_num[i];data_num[i]=data_num[j];data_num[j]=k1;
           max = j;
@@ -367,7 +359,7 @@ if(data.length!=0){
         k2=data[i];data[i]=data[max];data[max]=k2;
     }
 }
-res.render("searchpage",{kq: data})
+    res.render("searchpage",{kq: data})
     db.close();
   });
 });
@@ -391,7 +383,7 @@ passport.use(new LocalStrategy(
             });
         });
     }));
-// ham duoc goi khi xac thực thành công để lưu thông tin user vào sesstion
+// ham duoc goi khi xac thực thành công để lưu thông tin user vào session
 passport.serializeUser(function (user, done) {
     done(null, user.id);
 });

@@ -21,8 +21,12 @@
 .form-button{
   margin-top:15px;
   width:80px;
-  background-color: #fff;
+  background-color: #679bef;
   border: 1px solid #ccc;
   border-radius: 4px;
   height: 34px;
+}
+.form-format{
+  width:50%;
+  
 }

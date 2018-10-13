@@ -208,3 +208,27 @@ padding:0 1em 1em 1.5em;
 	height:30px;
 	padding:0.5em;
 }
+
+/*------------LOGIN-----------*/
+.forgotPS{
+	text-decoration: none;
+	margin-right:1em;
+	font-size:0.9em;
+	float: right;
+	margin-top:0.3em;
+	border: 1px solid #d3d3d3;
+	padding:0.5em;
+}
+#numberPhone{
+	width:300px;
+	padding:0.5em;
+	border:1px solid #dadada;
+	border-radius: 4px;
+}
+.sendcode{
+	padding:0.5em 1em;
+	border:1px solid #dadada;
+	border-radius: 4px;
+	background-color: #679bef
+	
+}
