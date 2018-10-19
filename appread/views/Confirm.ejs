@@ -8,14 +8,15 @@ window.location="login"
 else
 alert("Bạn nhập sai mã xác nhân Vui lòng nhập lại")
 }
-
 </script>
 <h2 class="page-header">Confirm Phone number</h2>
+<div class="form-format">
 <form method="post" action="/codeconfirm">
    <div class="form-group">
-    <input type="number" class="Confirm-number" placeholder="Code Confirm" name="code">
+    <input type="number" class="form-control" placeholder="Code Confirm" name="code">
   </div>
-  <button type="submit" class="form-button" onclick="checkCode()" value="Confirm Phone Number"></button>
+  <button type="submit" class="form-button" onclick="checkCode()" value="Confirm Phone Number">Confirm</button>
 </form>
+</div>
 
 <% include template/body2 %>

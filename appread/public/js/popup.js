@@ -1,5 +1,5 @@
 
-var socket = io("http://localhost:8082");
+var socket = io("http://localhost:8084");
 
 socket.on("Server-send-your-message",function(data){
     $(".ChatLog").append("<li class='ChatLog__entry ChatLog__entry_mine'><p class='ChatLog__message'>"+data+"</p></li>");
