@@ -281,7 +281,9 @@ passport.deserializeUser(function (id, done) {
 app.get('/login',function(req,res){
     res.render('login');
     });
-
+app.get('/themsanpham',function(req,res){
+    res.render('themsanpham');
+});
 app.post('/login',
 	passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login', failureFlash: true }),
 	function (req, res) {

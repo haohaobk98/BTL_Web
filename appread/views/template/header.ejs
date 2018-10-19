@@ -13,7 +13,7 @@
                 <div id="header1-inner-link-inner">
             <div class     ="header-inner-link">
               <ul>
-                <li><a href=#>History</a></li>
+                <li><a href="#">History</a></li>
                 <li><a href=#>Events</a></li>
                 <li><a href=#>Voucher</a></li>
               </ul>
@@ -43,6 +43,9 @@
     <ul>
         <% if(!user){ %>
             <li>
+                <a href="/themsanpham">Thêm sản phẩm</a>
+            </li>
+            <li>
                 <a href="#" >Sản phẩm giảm giá</a>
             </li>
             <li>
@@ -62,7 +65,7 @@
           <%}%>
           <% if(user) {%>
               <li>
-                  <a href=# >Thêm sản phẩm </a> 
+                  <a href="themsanpham.ejs">Thêm sản phẩm </a> 
               </li>
               
               <li>
