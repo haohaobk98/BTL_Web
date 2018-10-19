@@ -90,13 +90,12 @@ app.get('/register',function(req,res){
     });
 
 //Nexmo
-
 const nexmo = new Nexmo({
     apiKey: '5e555a5e',
     apiSecret: 'i5xyaslqhHZwW00z'
   }, { debug: true });
 
-// Catch form submit
+// khai bao bien de luu thong tin luc dang ki
 var code,code1 ;
 var name1;
 var username1;
@@ -165,7 +164,7 @@ PhoneNumber1 = PhoneNumber;
                   
                           // Emit to the client
                           io.emit('smsStatus', {data: data, code: text});
-                          res.render("resetPassword",{dt: text});
+                          res.render("Confirm",{dt: text});
                         }
                       }
                     );
@@ -277,8 +276,8 @@ app.post('/resetPassword',function(req,res){
          if (err) throw err;
          var dbo = db.db("loginapp");
         var password = {PhoneNumber: phoneInput}
-        //bcrypt 
-
+        
+            // ma hoa mat khau va cap nhat mat khau moi trong database
     bcrypt.genSalt(10, function(err, salt) {
         bcrypt.hash(resetPassword, salt, function(err, hash) {
             var newpass = { $set: {password: hash } };
@@ -288,17 +287,10 @@ app.post('/resetPassword',function(req,res){
             res.render('login');
             db.close();
         });
+   });      
    });
-
-        
-   });
-
-        });
-        
-
-    }
-
-    
+  });
+}    
 });
 
 
@@ -477,7 +469,7 @@ app.get("/",function(req,res){
 });
 app.get("/:id",function(req,res){
     var id = req.params.id;
-     id = new require('mongodb').ObjectID(id);
+     id = new require('mongodb').ObjectID;
     var query = {_id: id};
     mongoClient.connect(url, function(err, db) {
         if (err) throw err;
@@ -495,6 +487,62 @@ app.get("/:id",function(req,res){
         });
 });
 });
+
+// change password
+app.get('/changePassword/1',function(req,res){
+    res.render("changePassword");
+})
+
+app.post("/changePassword",function(req,res){
+
+    var oldPassword = req.body.oldPassword;
+    var newPassword = req.body.newPassword;
+    var newPassword2 = req.body.newPassword2;
+    
+    // truy cap de lay mat khau cu
+    var MongoClient = require('mongodb').MongoClient;
+    var url = "mongodb://localhost:27017";
+    MongoClient.connect(url,function(err,foundUser){
+        if(err) throw err;
+        var dbo = foundUser.db("loginapp");
+        dbo.collection("users").findOne({username:"hao"},function(err,user){
+            if(err) throw err;
+            if(user){
+
+                User.comparePassword(oldPassword,user.password,function(err,isMatch){
+            if(err) throw err;
+            if(isMatch){
+                            // check validator
+            //req.checkBody('oldPassword','Nhập mật khẩu cũ').notEmpty();
+            req.checkBody('newPassword','Nhập mật khẩu mới').notEmpty();
+            req.checkBody('newPassword2','Nhập lại mật khẩu mới').notEmpty();
+            req.checkBody('newPassword2','Xác nhận mật khẩu không khớp').equals(req.body.newPassword);
+
+    // check errors
+    var errors = req.validationErrors();
+        if(errors){
+        res.render("changePassword",{errors:errors});
+        }else{
+
+        var newPass = {username:"hao"};
+        bcrypt.genSalt(10, function(err, salt) {
+            bcrypt.hash(newPassword, salt, function(err, hash) {
+                var newpass = { $set: {password: hash } };
+                dbo.collection("users").updateOne(newPass, newpass, function(err, result) {
+                if (err) throw err;
+                console.log("Cập nhật mật khẩu thành công");
+                res.render('login');
+                db.close();
+            });
+       });      
+       });
+    }
+    }else{res.render("changePassword"); }})
+ }else{ res.render("changePassword");}
+ })
+}); 
+})
+
 
 server.listen(8084,function(){
     console.log('server started at port 8084');
